@@ -300,7 +300,7 @@ create or replace package body PKG_METRO_CONSULTA as
     function QTD_OCORRENCIA return number is
         v_qtd number;
     begin
-        select count(*) into v_qtd from T_METRO_OCORRENCIA;
+        select count(*) into v_qtd from T_METRO_OCORRENCIA where status = 'S';
         return v_qtd;
  
     exception
@@ -629,6 +629,10 @@ begin
 end;
 /
 
+select * from t_metro_estacao;
+select * from t_metro_estacao where ativa = 'N';
+select * from T_METRO_OCORRENCIA;
+
 -- ==================================================== Finalizar ocorrências ===================================
 begin
     pkg_metro_ocorrencia.finalizar_ocorrencia(1);
@@ -659,3 +663,22 @@ commit;
 select * from t_metro_audit_usuario;
 select * from t_metro_audit_ocorrencia;
 select * from t_metro_audit_estacao;
+
+
+
+
+
+
+
+
+
+
+BEGIN
+    FOR t IN (SELECT table_name FROM user_tables)
+    LOOP
+        EXECUTE IMMEDIATE
+            'DROP TABLE "' || t.table_name ||
+            '" CASCADE CONSTRAINTS PURGE';
+    END LOOP;
+END;
+/
